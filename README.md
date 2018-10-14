@@ -15,5 +15,10 @@ four different versions of everything (including an "alt.zip", i.e.,
 to sort it properly. The timestamp of the first commit is the oldest timestamp
 that is recorded (in "alt.zip").
 
+For some honest-to-god teenage cringe, [look at the original
+readme.txt](https://github.com/johndoe31415/chaosmathematik/readme.txt) file.
+Thankfully only available in German.
+
+
 ## License
 All of this is CC-0.
