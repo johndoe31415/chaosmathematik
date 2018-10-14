@@ -91,6 +91,8 @@ type
     Click: TMediaPlayer;
     Optionen_Sounds: TMenuItem;
     Ready: TMediaPlayer;
+    Optionen_GrosserBildschirm: TMenuItem;
+    FeigenBaumDiagramm: TMenuItem;
     procedure B_XChange(Sender: TObject);
     procedure A_XQuadratChange(Sender: TObject);
     procedure StartUp(Sender: TObject);
@@ -132,6 +134,8 @@ type
     procedure Optionen_Rasterung_EinstellungenClick(Sender: TObject);
     procedure Optionen_Rasterung_AnAusClick(Sender: TObject);
     procedure Optionen_SoundsClick(Sender: TObject);
+    procedure Optionen_GrosserBildschirmClick(Sender: TObject);
+    procedure FeigenBaumDiagrammClick(Sender: TObject);
   private
     { Private-Deklarationen }
   public
@@ -166,8 +170,8 @@ var MainForm                 : TMainForm;
     Linien, Excpt, ButDrueck : Boolean;
 
 
-Const Version='5.15';
-      Zeilen ='2273';
+Const Version='5.25';
+      Zeilen ='2404';
 
 function Round(I : Real):String;
 function Cr(A : string):string;
@@ -177,14 +181,110 @@ function PenStyle2Byte(I : TPenStyle):Byte;
 function Byte2Penstyle(I : Byte) : TPenStyle;
 procedure SetzeQuickHelp;
 function CheckChg(Value : Byte):Boolean;
+procedure CheckeBildschirmGroesse;
 
 implementation
 
 
-uses ColorUnit, TextUnit, InfoUnit, UserInformationenUnit, RasterungUnit;
+uses ColorUnit, TextUnit, InfoUnit, UserInformationenUnit, RasterungUnit,
+  FeigenBaumUnit;
 
 
 {$R *.DFM}
+
+procedure SwapDisplay(DisplayType : Byte);
+
+begin
+
+  if (DisplayType<>1) and (DisplayType<>2) then begin
+    showmessage('Ungültiger Parameter beim Aufruf der Prozedur "SwapDisplay".');
+    exit;
+  end;
+
+  if (DisplayType=1) then begin
+    MainForm.Left:=275;
+    MainForm.Top:=289;
+    MainForm.ClientHeight:=500;
+    MainForm.ClientWidth:=775;
+    MainForm.Zeichnung.Width:=450;
+    MainForm.Zeichnung.Height:=450;
+    MainForm.Bevel1.Height:=545;
+    MainForm.HorBevel2.Left:=624;
+    MainForm.HorBevel2.Height:=545;
+    MainForm.AnzeigenLabel.Left:=704;
+    MainForm.Bevel6.Left:=624;
+    MainForm.AktXWertLabel.Left:=632;
+    MainForm.XWertLabel.Left:=632;
+    MainForm.Bevel7.Left:=624;
+    MainForm.AktIterationLabel.Left:=632;
+    MainForm.Bevel8.Left:=624;
+    MainForm.MenuBevel.Width:=777;
+    MainForm.XKoordinate.Top:=400;
+    MainForm.YKoordinate.Top:=424;
+    MainForm.Label16.Top:=400;
+    MainForm.Label17.Top:=424;
+    MainForm.LinksButton.Left:=640;
+    MainForm.ObenButton.Left:=680;
+    MainForm.RechtsButton.Left:=720;
+    MainForm.UntenButton.Left:=680;
+    MainForm.MinusZoomButton.Left:=632;
+    MainForm.PlusZoomButton.Left:=728;
+    MainForm.ZentrierenButton.Left:=680;
+    MainForm.Sektor.Top:=448;
+    MainForm.Bevel9.Left:=624;
+    MainForm.Status.Top:=481;
+    MainForm.Status.Width:=775;
+    MainForm.MiniaturYAchse.Left:=696;
+    MainForm.MiniaturXAchse.Left:=660;
+    MainForm.X2Box.Left:=704;
+    MainForm.Y2Box.Left:=728;
+    MainForm.X1Box.Left:=640;
+    MainForm.Y1Box.Left:=664;
+    MainForm.IterationsNr.Left:=632;
+  end;
+
+  if (DisplayType=2) then begin
+    MainForm.Left:=146;
+    MainForm.Top:=137;
+    MainForm.ClientHeight:=626;
+    MainForm.ClientWidth:=916;
+    MainForm.Zeichnung.Width:=601;
+    MainForm.Zeichnung.Height:=577;
+    MainForm.Bevel1.Height:=625;
+    MainForm.HorBevel2.Left:=762;
+    MainForm.HorBevel2.Height:=625;
+    MainForm.AnzeigenLabel.Left:=840;
+    MainForm.Bevel6.Left:=760;
+    MainForm.AktXWertLabel.Left:=768;
+    MainForm.XWertLabel.Left:=768;
+    MainForm.Bevel7.Left:=760;
+    MainForm.AktIterationLabel.Left:=768;
+    MainForm.Bevel8.Left:=760;
+    MainForm.MenuBevel.Width:=921;
+    MainForm.XKoordinate.Top:=472;
+    MainForm.YKoordinate.Top:=496;
+    MainForm.Label16.Top:=472;
+    MainForm.Label17.Top:=496;
+    MainForm.LinksButton.Left:=776;
+    MainForm.ObenButton.Left:=816;
+    MainForm.RechtsButton.Left:=856;
+    MainForm.UntenButton.Left:=816;
+    MainForm.MinusZoomButton.Left:=768;
+    MainForm.PlusZoomButton.Left:=864;
+    MainForm.ZentrierenButton.Left:=816;
+    MainForm.Sektor.Top:=520;
+    MainForm.Bevel9.Left:=760;
+    MainForm.Status.Top:=607;
+    MainForm.Status.Width:=916;
+    MainForm.MiniaturYAchse.Left:=832;
+    MainForm.MiniaturXAchse.Left:=796;
+    MainForm.X2Box.Left:=840;
+    MainForm.Y2Box.Left:=864;
+    MainForm.X1Box.Left:=776;
+    MainForm.Y1Box.Left:=800;
+    MainForm.IterationsNr.Left:=768;
+  end;
+end;
 
 procedure CheckRasterung;
   begin
@@ -220,6 +320,7 @@ Var Reg : TRegistry;
           Optionen_AlleFehlerAnzeigen.Checked:=Reg.ReadBool('Debug-Modus');
           Optionen_QuickHelpAnzeigen.Checked:=Reg.ReadBool('Quickhelp');
           Optionen_Sounds.Checked:=Reg.ReadBool('Sound');
+          Optionen_GrosserBildschirm.Checked:=Reg.ReadBool('Grosser Bildschirm');
           SeperatAbfrage;
           SetzeQuickhelp;
         Reg.CloseKey;
@@ -840,6 +941,7 @@ Var Reg : TRegistry;
 
     CheckRasterung;
     FarbenReset;
+    CheckeBildschirmGroesse;
 
     CtrlA:=A_XQuadrat.Text;
     CtrlB:=B_X.Text;
@@ -1282,6 +1384,7 @@ Var Reg : TRegistry;
           Reg.WriteBool('Debug-Modus',Optionen_AlleFehlerAnzeigen.Checked);
           Reg.WriteBool('Quickhelp',Optionen_QuickHelpAnzeigen.Checked);
           Reg.WriteBool('Sound',Optionen_Sounds.Checked);
+          Reg.WriteBool('Grosser Bildschirm',Optionen_GrosserBildschirm.Checked);
         Reg.CloseKey;
         Reg.OpenKey('SOFTWARE\ChaosMathematik\Zoom',true);
           Reg.WriteString('X1', X1Box.Text);
@@ -1440,7 +1543,27 @@ procedure TMainForm.Optionen_Rasterung_AnAusClick(Sender: TObject);
 procedure TMainForm.Optionen_SoundsClick(Sender: TObject);
   begin
     If Optionen_Sounds.Checked then Optionen_Sounds.Checked:=false else
-                                    Optionen_Sounds.Checked:=true; 
+                                    Optionen_Sounds.Checked:=true;
+  end;
+
+procedure CheckeBildschirmGroesse;
+  begin
+    with MainForm do begin
+      if Optionen_GrosserBildschirm.Checked then SwapDisplay(2) else
+                                                 SwapDisplay(1);
+    end;
+  end;
+
+procedure TMainForm.Optionen_GrosserBildschirmClick(Sender: TObject);
+  begin
+    if Optionen_GrosserBildschirm.Checked then Optionen_GrosserBildschirm.Checked:=false else
+                                               Optionen_GrosserBildschirm.Checked:=true;
+    CheckeBildschirmGroesse;
+    Zeichne;
+  end;
+procedure TMainForm.FeigenBaumDiagrammClick(Sender: TObject);
+  begin
+    FeigenBaumForm.ShowModal;
   end;
 
 end.
