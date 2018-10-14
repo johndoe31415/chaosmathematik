@@ -1,4 +1,4 @@
-# ChaosMathematik
+# ChaosMathematik v5.25
 This project is purely for fun on here, I don't expect anyone to actually mess
 with the code. I found it on some archive CDs recently. It's the first big
 programming project I have ever done, written in Delphi 3 and dates back to
