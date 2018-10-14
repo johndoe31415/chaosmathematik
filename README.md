@@ -16,9 +16,24 @@ to sort it properly. The timestamp of the first commit is the oldest timestamp
 that is recorded (in "alt.zip").
 
 For some honest-to-god teenage cringe, [look at the original
-readme.txt](https://github.com/johndoe31415/chaosmathematik/readme.txt) file.
+readme.txt](https://github.com/johndoe31415/chaosmathematik/blob/master/readme.txt) file.
 Thankfully only available in German.
 
+Here's some screenshots that I took in 1998:
+
+![First shot apparently](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/01.jpg)
+
+![In debugging](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/02.jpg)
+
+![Slowly working](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/03.jpg)
+
+![Even better](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/04.jpg)
+
+![Version 2.00](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/05.jpg)
+
+![Version 4.85](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/06.jpg)
+
+![Version 5.00](https://raw.githubusercontent.com/johndoe31415/chaosmathematik/master/doc/07.jpg)
 
 ## License
 All of this is CC-0.
